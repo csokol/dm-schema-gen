@@ -1,10 +1,10 @@
 require 'mysql2'
 require 'active_support/all'
 require 'erb'
-require 'ostruct'
 
 class Property
   TYPES_MAP = {"varchar(255)" => "String", "datetime" => "DateTime", "int(11)" => "Integer", "bigint(20)" => "Serial"}
+  attr_reader :name, :type
   def initialize(options)
     field_name = options[:name]
     @name = field_name_to_property field_name
@@ -20,8 +20,6 @@ class Property
     name.underscore
   end
   def convert_type(mysql_type)
-    puts mysql_type.class
-    puts mysql_type
     TYPES_MAP[mysql_type]
   end
 end
@@ -50,8 +48,6 @@ class ModelClass
 end
 
 
-puts "lala"
-
 DATABASE = "metricminerdsl"
 
 client = Mysql2::Client.new(username: "root", database:DATABASE)
@@ -71,5 +67,7 @@ models.each do |model|
 end
 
 models.each do |m|
-  puts m.generate_class
+  file_name = "#{m.name.underscore}.rb"
+  file = File.open("generated/#{file_name}", 'w')
+  file.write(m.generate_class)
 end

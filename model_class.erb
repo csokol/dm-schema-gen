@@ -1,2 +1,7 @@
 class <%= @name %>
+
+  include DataMapper::Resource
+  <% @properties.each do |p| %>
+  property :<%="#{p.name}, #{p.type}"%><%end%>
+
 end
