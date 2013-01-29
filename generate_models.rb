@@ -47,15 +47,19 @@ class ModelClass
 
 end
 
+DATABASE, USER = ARGV
 
-DATABASE = "metricminerdsl"
+if USER.nil?
+  abort "usage: generate_models.rb <database> <user>"
+end
 
-client = Mysql2::Client.new(username: "root", database:DATABASE)
+client = Mysql2::Client.new(username: USER, database:DATABASE)
 
 models = []
 
 client.query("show tables").each do |row| 
-  models << ModelClass.new(row["Tables_in_#{DATABASE}"])
+  model_name = row["Tables_in_#{DATABASE}"]
+  models << ModelClass.new(model_name)
 end
 
 models.each do |model|
@@ -68,6 +72,7 @@ end
 
 models.each do |m|
   file_name = "#{m.name.underscore}.rb"
+  puts "generating #{m.name} class..."
   file = File.open("generated/#{file_name}", 'w')
   file.write(m.generate_class)
 end
