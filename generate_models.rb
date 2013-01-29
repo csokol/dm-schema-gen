@@ -71,8 +71,8 @@ models.each do |model|
 end
 
 models.each do |m|
-  file_name = "#{m.name.underscore}.rb"
-  puts "generating #{m.name} class..."
-  file = File.open("generated/#{file_name}", 'w')
+  file_name = "generated/#{m.name.underscore}.rb"
+  puts "generating #{m.name} class \n\tinto #{file_name}..."
+  file = File.open(file_name, 'w')
   file.write(m.generate_class)
 end
